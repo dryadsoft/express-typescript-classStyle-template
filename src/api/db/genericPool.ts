@@ -13,10 +13,19 @@ const dbConfig = {
   web_port: <string>process.env.DB_WEB_PORT,
 };
 
+export type TPool = generic_pool.Pool<any> | null;
+
 class GenericPool {
-  public pool: generic_pool.Pool<any>;
-  constructor() {
-    this.pool = generic_pool.createPool(this.factory(), this.options());
+  public pool: TPool = null;
+
+  constructor() {}
+
+  getPool() {
+    if (!this.pool) {
+      this.pool = generic_pool.createPool(this.factory(), this.options());
+      return this.pool;
+    }
+    return this.pool;
   }
 
   private factory() {
@@ -43,4 +52,4 @@ process.on("exit", () => {
   console.log("drain");
 });
 
-export default new GenericPool().pool;
+export default new GenericPool().getPool();
