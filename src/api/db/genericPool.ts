@@ -22,9 +22,11 @@ class GenericPool {
 
   getPool() {
     if (!this.pool) {
+      console.log("already");
       this.pool = generic_pool.createPool(this.factory(), this.options());
       return this.pool;
     }
+    console.log("create");
     return this.pool;
   }
 
