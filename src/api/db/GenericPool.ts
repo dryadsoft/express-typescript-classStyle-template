@@ -54,4 +54,4 @@ process.on("exit", () => {
   console.log("drain");
 });
 
-export default new GenericPool();
+export default new GenericPool().getPool();

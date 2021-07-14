@@ -12,20 +12,30 @@ class Connection {
 
   public async getQuery(query: string) {
     try {
-      this.pool = getPool.getPool();
-      this.conn = await this.pool.acquire();
+      this.pool = getPool;
+      this.conn = await this.pool.acquire(1);
       console.log(
+        "ready",
         this.pool.size,
         this.pool.available,
         this.pool.borrowed,
         this.pool.pending
       );
       const rows = await this.conn.query(query);
+      console.log(
+        "ing",
+        this.pool.size,
+        this.pool.available,
+        this.pool.borrowed,
+        this.pool.pending
+      );
+
       await waiting(5000);
-      await this.release();
+      await this.release(this.pool, this.conn);
       //   await this.pool.drain();
       //   await this.pool.clear();
       console.log(
+        "end",
         this.pool.size,
         this.pool.available,
         this.pool.borrowed,
@@ -39,11 +49,11 @@ class Connection {
     }
   }
 
-  private async release() {
-    if (this.pool && this.conn) {
-      await this.pool.release(this.conn);
-      //   await this.pool.drain();
-      //   await this.pool.clear();
+  private async release(Pool: TPool, Conn: any) {
+    if (Pool && Conn) {
+      await Pool.release(Conn);
+      // await Pool.drain();
+      // await Pool.clear();
     }
   }
   private async destory() {
