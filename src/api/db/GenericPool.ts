@@ -22,11 +22,11 @@ class GenericPool {
 
   getPool() {
     if (!this.pool) {
-      console.log("already");
+      console.log("create");
       this.pool = generic_pool.createPool(this.factory(), this.options());
       return this.pool;
     }
-    console.log("create");
+    console.log("already");
     return this.pool;
   }
 
@@ -54,4 +54,4 @@ process.on("exit", () => {
   console.log("drain");
 });
 
-export default new GenericPool().getPool();
+export default new GenericPool();

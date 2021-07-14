@@ -1,8 +1,8 @@
-import GenericPool, { TPool } from "./GenericPool";
+import getPool, { TPool } from "./GenericPool";
 
-const waiting = () => {
+const waiting = (miliseconds: number) => {
   return new Promise((resolve) => {
-    setTimeout(resolve, 3000);
+    setTimeout(resolve, miliseconds);
   });
 };
 
@@ -12,7 +12,7 @@ class Connection {
 
   public async getQuery(query: string) {
     try {
-      this.pool = GenericPool;
+      this.pool = getPool.getPool();
       this.conn = await this.pool.acquire();
       console.log(
         this.pool.size,
@@ -21,7 +21,7 @@ class Connection {
         this.pool.pending
       );
       const rows = await this.conn.query(query);
-      await waiting();
+      await waiting(5000);
       await this.release();
       //   await this.pool.drain();
       //   await this.pool.clear();
