@@ -6,61 +6,76 @@ const waiting = (miliseconds: number) => {
   });
 };
 
+const asyncLog = (...args: any) => {
+  return new Promise((resolve) => {
+    console.log(args);
+    resolve("");
+  });
+};
+
 class Connection {
   private pool: TPool = null;
   private conn: any;
 
+  constructor() {
+    this.pool = getPool;
+  }
   public async getQuery(query: string) {
     try {
-      this.pool = getPool;
-      this.conn = await this.pool.acquire(1);
-      console.log(
-        "ready",
-        this.pool.size,
-        this.pool.available,
-        this.pool.borrowed,
-        this.pool.pending
-      );
-      const rows = await this.conn.query(query);
-      console.log(
-        "ing",
-        this.pool.size,
-        this.pool.available,
-        this.pool.borrowed,
-        this.pool.pending
-      );
+      if (this.pool) {
+        this.conn = this.pool.acquire();
+        await asyncLog(
+          "start",
+          this.pool.size,
+          this.pool.available,
+          this.pool.borrowed,
+          this.pool.pending
+        );
 
-      await waiting(5000);
-      await this.release(this.pool, this.conn);
-      //   await this.pool.drain();
-      //   await this.pool.clear();
-      console.log(
-        "end",
-        this.pool.size,
-        this.pool.available,
-        this.pool.borrowed,
-        this.pool.pending
-      );
+        await waiting(1000);
+        this.conn
+          .then((client: any) => {
+            return client.query(query, [], () => {
+              // return object back to pool
+              this.pool?.release(client);
+            });
+          })
+          .then((rows: any) => {
+            console.log(rows);
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+        // const rows = await this.conn.query(query, [], () => {
+        //   this.pool?.release(this.conn);
+        // });
 
-      return rows;
+        // await this.release();
+        await asyncLog(
+          "end",
+          this.pool.size,
+          this.pool.available,
+          this.pool.borrowed,
+          this.pool.pending
+        );
+
+        // return rows;
+      }
     } catch (e) {
-      await this.destory();
+      await this.release();
       throw e;
     }
   }
 
-  private async release(Pool: TPool, Conn: any) {
-    if (Pool && Conn) {
-      await Pool.release(Conn);
+  private async release() {
+    if (this.pool && this.conn) {
+      try {
+        await this.pool.release(this.conn);
+      } catch (err) {
+        console.log(err);
+      }
       // await Pool.drain();
       // await Pool.clear();
-    }
-  }
-  private async destory() {
-    if (this.pool && this.conn) {
-      await this.pool.release(this.conn);
-      //   await this.pool.drain();
-      //   await this.pool.clear();
     }
   }
 }

@@ -10,7 +10,6 @@ const dbConfig = {
   database: <string>process.env.DB_DATABASE,
   multipleStatements:
     <string>process.env.DB_MULTIPLESTATEMENTS === "true" ? true : false,
-  web_port: <string>process.env.DB_WEB_PORT,
 };
 
 export type TPool = generic_pool.Pool<any> | null;
@@ -45,7 +44,7 @@ class GenericPool {
   private options() {
     return {
       max: 10, // maximum size of the pool
-      min: 2, // minimum size of the pool
+      min: 4, // minimum size of the pool
     };
   }
 }
