@@ -1,4 +1,6 @@
-import getPool, { TPool } from "./GenericPool";
+import { Pool } from "mariadb";
+import DBPool from "./DBPool";
+// import DBPool from "./DBPool";
 
 const waiting = (miliseconds: number) => {
   return new Promise((resolve) => {
@@ -14,68 +16,34 @@ const asyncLog = (...args: any) => {
 };
 
 class Connection {
-  private pool: TPool = null;
+  private pool: Pool | null = null;
   private conn: any;
 
   constructor() {
-    this.pool = getPool;
+    this.pool = DBPool;
   }
   public async getQuery(query: string) {
     try {
       if (this.pool) {
-        this.conn = this.pool.acquire();
+        this.conn = await this.pool.getConnection();
+
+        const rows = await this.conn.query(query);
+        // await asyncLog("connected ! connection id is " + this.conn.threadId);
+        // await waiting(1000);
+        await this.conn.release(); //release to pool
+
         await asyncLog(
-          "start",
-          this.pool.size,
-          this.pool.available,
-          this.pool.borrowed,
-          this.pool.pending
+          "connection status =>",
+          this.pool.totalConnections(),
+          this.pool.activeConnections(),
+          this.pool.idleConnections()
         );
 
-        await waiting(1000);
-        this.conn
-          .then((client: any) => {
-            return client.query(query, [], () => {
-              // return object back to pool
-              this.pool?.release(client);
-            });
-          })
-          .then((rows: any) => {
-            console.log(rows);
-          })
-          .catch((err: any) => {
-            console.log(err);
-          });
-        // const rows = await this.conn.query(query, [], () => {
-        //   this.pool?.release(this.conn);
-        // });
-
-        // await this.release();
-        await asyncLog(
-          "end",
-          this.pool.size,
-          this.pool.available,
-          this.pool.borrowed,
-          this.pool.pending
-        );
-
-        // return rows;
+        return rows;
       }
     } catch (e) {
-      await this.release();
+      console.log(e);
       throw e;
-    }
-  }
-
-  private async release() {
-    if (this.pool && this.conn) {
-      try {
-        await this.pool.release(this.conn);
-      } catch (err) {
-        console.log(err);
-      }
-      // await Pool.drain();
-      // await Pool.clear();
     }
   }
 }

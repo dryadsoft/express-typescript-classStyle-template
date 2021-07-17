@@ -1,5 +1,4 @@
-// import Connection from "../db/Connection";
-import MariadbConn from "../db/MariadbConn";
+import Connection from "../db/Connection";
 interface IUserData {
   name: string;
   id: number;
@@ -11,7 +10,7 @@ interface IUserService {
 class UserService implements IUserService {
   public async userProfileData(): Promise<any> {
     try {
-      const rows = await MariadbConn.getQuery(
+      const rows = await Connection.getQuery(
         "select BASC_YY from TB_BASC_TERM"
       );
       return rows;

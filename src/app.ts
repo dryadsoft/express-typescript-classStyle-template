@@ -24,6 +24,7 @@ class App {
   }
 
   private middleware(): void {
+    // this.app.use(cors());
     this.app.use(helmet());
     this.app.use(logger("dev"));
     this.app.use(express.json());
