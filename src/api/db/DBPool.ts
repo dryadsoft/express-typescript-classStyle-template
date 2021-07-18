@@ -1,5 +1,6 @@
 import "dotenv/config";
-import mariadb, { Pool } from "mariadb";
+import generic_pool from "generic-pool";
+import mariadb from "mariadb";
 
 const dbConfig = {
   host: <string>process.env.DB_HOST,
@@ -12,7 +13,7 @@ const dbConfig = {
 };
 
 class DBPool {
-  private static pool: Pool;
+  private static pool: mariadb.Pool;
 
   static getPool() {
     if (!DBPool.pool) {
@@ -20,6 +21,39 @@ class DBPool {
       DBPool.pool = mariadb.createPool({ ...dbConfig, connectionLimit: 10 });
     }
     return DBPool.pool;
+  }
+}
+
+class DBPool2 {
+  private static pool: generic_pool.Pool<mariadb.Connection>;
+
+  public static getPool() {
+    if (!DBPool2.pool) {
+      console.log("start pool");
+      DBPool2.pool = generic_pool.createPool(
+        DBPool2.factory(),
+        DBPool2.options()
+      );
+    }
+    return DBPool2.pool;
+  }
+
+  private static factory() {
+    return {
+      create: (): Promise<mariadb.Connection> => {
+        return mariadb.createConnection(dbConfig);
+      },
+      destroy: function (client: mariadb.Connection): any {
+        client.end();
+      },
+    };
+  }
+
+  private static options() {
+    return {
+      min: 5,
+      max: 10,
+    };
   }
 }
 
