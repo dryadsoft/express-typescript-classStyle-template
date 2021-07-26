@@ -1,5 +1,8 @@
+// import NodeBatis from "node-batis";
+
+import NodeBatis from "node-batis";
 import Connection from "../db/Connection";
-import NodeBatis from "../db/NodeBatis";
+
 interface IUserData {
   name: string;
   id: number;
@@ -13,13 +16,23 @@ class UserService implements IUserService {
     try {
       // let rows;
       // for (let i = 0; i < 100; i++) {
-      //   rows = await Connection.getQuery("select BASC_YY from TB_BASC_TERM");
+      //   const param = {
+      //     param: 1,
+      //   };
+      //   const query = await NodeBatis.getStatement({
+      //     mapFile: "user",
+      //     id: "select_test2",
+      //     param,
+      //   });
+      //   rows = await Connection.getQuery(query);
       // }
       // return rows;
       const param = {
         param: 1,
       };
-      const query = await NodeBatis.getSelectStatement({
+
+      const nodeBatis = NodeBatis.getInstance();
+      const query = await nodeBatis.getStatement({
         mapFile: "user",
         id: "select_test2",
         param,

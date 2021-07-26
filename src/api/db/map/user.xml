@@ -10,16 +10,9 @@
           FROM TB_BASC_TERM
 		WHERE 1 = #{param}
 	</select>
-	<update id="update_test3">
+	<update id="update_test7">
 		SELECT BASC_YY 
           FROM TB_BASC_TERM
 	</update>
-	<insert id="insert_test2">
-		SELECT BASC_YY 
-          FROM TB_BASC_TERM
-	</insert>
-	<delete id="delete_test2">
-		SELECT BASC_YY 
-          FROM TB_BASC_TERM
-	</delete>
+
 </mapper>

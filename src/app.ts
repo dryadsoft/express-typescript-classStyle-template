@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import logger from "morgan";
+import NodeBatis from "node-batis";
 import { Routes } from "./api/routes";
 
 class App {
@@ -29,6 +30,10 @@ class App {
     this.app.use(logger("dev"));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+
+    const nodeBatis = NodeBatis.getInstance();
+    const xmlDbPath = `${__dirname}/api/db/map`;
+    nodeBatis.init(xmlDbPath, true);
   }
 
   private errorHandle(): void {

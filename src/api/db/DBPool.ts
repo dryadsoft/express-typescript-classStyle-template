@@ -19,6 +19,7 @@ class DBPool {
     if (!DBPool.pool) {
       console.log("start pool");
       DBPool.pool = mariadb.createPool({ ...dbConfig, connectionLimit: 10 });
+      // `${__dirname}/map`
     }
     return DBPool.pool;
   }
