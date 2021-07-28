@@ -32,6 +32,7 @@ class UserService implements IUserService {
       };
 
       const nodeBatis = NodeBatis.getInstance();
+
       const query = await nodeBatis.getStatement({
         mapFile: "user",
         id: "select_test2",

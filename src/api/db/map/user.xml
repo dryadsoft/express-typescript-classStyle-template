@@ -10,7 +10,7 @@
           FROM TB_BASC_TERM
 		WHERE 1 = #{param}
 	</select>
-	<update id="update_test7">
+	<update id="update_test8">
 		SELECT BASC_YY 
           FROM TB_BASC_TERM
 	</update>

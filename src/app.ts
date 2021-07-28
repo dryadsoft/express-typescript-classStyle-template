@@ -2,8 +2,8 @@ import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import logger from "morgan";
 import NodeBatis from "node-batis";
+import path from "path";
 import { Routes } from "./api/routes";
-
 class App {
   public app: express.Application;
   public router: Routes = new Routes();
@@ -32,7 +32,7 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
 
     const nodeBatis = NodeBatis.getInstance();
-    const xmlDbPath = `${__dirname}/api/db/map`;
+    const xmlDbPath = path.join(__dirname, "/api/db/map");
     nodeBatis.init(xmlDbPath, true);
   }
 

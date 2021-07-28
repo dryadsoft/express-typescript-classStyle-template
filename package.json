@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "local": "CHOKIDAR_USEPOLLING=true nodemon --watch src --delay 1 --exec ts-node ./src/server.ts",
-    "local2": "nodemon --watch src --delay 1 --exec ts-node ./src/server.ts",
+    "local:wsl2": "CHOKIDAR_USEPOLLING=true nodemon --watch src --delay 1 --exec ts-node ./src/server.ts",
+    "local:win": "nodemon --watch src --delay 1 --exec ts-node ./src/server.ts",
     "start": "yarn build && node dist/server.js"
   },
   "devDependencies": {
